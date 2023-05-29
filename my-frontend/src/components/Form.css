@@ -3,9 +3,9 @@
     height: auto;
     margin: 0 auto; /* Center the form container on the page */
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
     border-radius: 5px; /* Round the corners */
-    background-color: #ffffff; /* Change the background color if you'd like */
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+    background-color: #f7f7f7;
 }
 
 .loginForm {
@@ -97,7 +97,7 @@
 
 .registerForm input[type="submit"] {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: #007BFF; /* Changed color to blue */
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -108,12 +108,12 @@
 }
 
 .registerForm input[type="submit"]:hover {
-    background-color: #45a049;
+    background-color: #0056b3; /* Changed color to darker blue */
 }
 
 .registerForm .haveAccount {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: #007BFF; /* Changed color to blue */
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -124,5 +124,5 @@
 }
 
 .registerForm .haveAccount:hover {
-    background-color: #45a049;
+    background-color: #0056b3; /* Changed color to darker blue */
 }
