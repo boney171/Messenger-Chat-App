@@ -1,7 +1,7 @@
 import './Form.css';
 import RegistrationForm from './RegistrationForm';
 import {useState} from 'react';
-
+import axios from 'axios';
 function LoginForm(props) {
     const [loginModal, setLoginModal] = useState(true);
     const [registerModal, setRegisterModal] = useState(false);
@@ -14,30 +14,28 @@ function LoginForm(props) {
  
     const handleLoginClick = async (e) => {
       e.preventDefault();
-
+    
       const user = {
         username: username,
         password: password,
       };
-
+    
       try {
-        const response = await fetch('http://localhost:3001/api/auth/login', {
-          method: 'POST',
-          headers: {'Content-Type' : 'application/json'},
-          body: JSON.stringify(user)
-        });
-
-        const data = await response.json();
+        const response = await axios.post('http://localhost:3001/api/auth/login', user, {withCredentials: true});
+    
+        const data = response.data;
         
         if(data.sessionID === null){
           alert(data.message);
         } else {
-          localStorage.setItem('sessionID', data.sessionID);
+          props.setSessionID(data.user);
+          console.log(data.user);
           //to retrieve const sessionID = localStorage.getItem('sessionID');
+          props.setSessionID(data.user);
           props.onSessionChange();
           setLoginModal(false);
         }
-
+    
       } catch (error) {
         console.log(error);
       }

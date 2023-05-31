@@ -1,6 +1,7 @@
 // Lobby.js
 import { useState, useEffect } from 'react';
 import './Form.css';
+import axios from 'axios';
 function Lobby({ onJoinRoom , setSessionID}) {  // take in onJoinRoom as prop
 
     const [rooms, setRooms] = useState([]);
@@ -14,16 +15,18 @@ function Lobby({ onJoinRoom , setSessionID}) {  // take in onJoinRoom as prop
     };
 
     const logout = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/api/auth/logout', {
-              method: 'GET',
-            });
-    
-            const data = await response.json();
-            console.log(data);
-        }catch (error) {
-            console.log(error);
-          }
+       setSessionID(null);
+       try{
+        axios.get("http://localhost:3001/api/auth/logout", { withCredentials: true })
+        .then(res => {
+          console.log(res.data);
+        if (res.data.loggedOut === true) {
+          setSessionID("");
+        } 
+      })
+       }catch(error){
+        console.log(error)
+       }
 
     }
     return (

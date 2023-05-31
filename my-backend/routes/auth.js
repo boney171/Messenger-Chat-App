@@ -8,12 +8,6 @@ router.get('/router', (req,res)=>{
 });
 
 
-router.get('/logout', (req, res) =>{
-    console.log("User is logging out, destroying the session id");
-    req.session.destroy();
-    res.redirect("/");
-})
-
 
 router.post('/login', async (req, res) => {
     console.log("User sending a post request on the login page!");
@@ -30,22 +24,18 @@ router.post('/login', async (req, res) => {
       } else {
         console.log("Successfully logged in");
         req.session.authenticated = true;
-        req.session.username = username;
-        return res.status(200).json({ message: "Successfully logged in", sessionID: req.session.id, sessionUsername: req.session.username }); // Login success
+        req.session.user = username;
+        return res.status(200).json({ message: "Successfully logged in", sessionID: req.session.id, user: req.session.user,}); // Login success
       }
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "Server error" }); // Server error
     }
   })
-router.get('/login',  (req,res) =>{
-  
-    try{
-        res.send("Hello World!");
-        console.log("Test User!");
-    } catch (error){
-        console.log(error);
-    }
+router.get('/session',  (req,res) =>{
+  if(req.session.user){
+    res.send({loggedIn: true, user: req.session.user});
+  } else res.send({loggedIn: false});
 })
 router.post('/signup', async (req,res) =>{
     const user = new User ({
@@ -65,8 +55,8 @@ router.post('/signup', async (req,res) =>{
 });
 
 router.get('/logout', (req, res) => {
-  console.log("User is logging out, destroying the session id");
+  console.log(req.session.user);
+  res.json({loggedOut: true})
   req.session.destroy();
-  res.json({message: "Successfully logged out!"});
 });
 module.exports = router;

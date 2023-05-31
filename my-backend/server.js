@@ -16,16 +16,27 @@ dotenv.config();
 // Configure body-parser middleware to parse request bodies
 
 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+}));
 
 app.use(session({
     secret: "myTempKey",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true,
+    cookie: {
+        secure: false, // set this to true in production, only work with https
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      },
+
 }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.json());
 let connect = "mongodb+srv://boney1711:j1zliceCDkRmYT6C@cluster0.g38qpg2.mongodb.net/?retryWrites=true&w=majority";
 const auth = require('./routes/auth')
 app.use('/api/auth/', auth);
@@ -47,11 +58,7 @@ app.get('/mainPage', (req,res) =>{
     res.send("Welcome to the home page!")
 });
 
-app.get('/logout', (req, res) =>{
-    console.log("User is logging out, destroying the session id");
-    req.session.destroy();
-    res.redirect("/");
-})
+
 
 
 
