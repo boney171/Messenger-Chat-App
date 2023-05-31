@@ -64,4 +64,9 @@ router.post('/signup', async (req,res) =>{
     }
 });
 
+router.get('/logout', (req, res) => {
+  console.log("User is logging out, destroying the session id");
+  req.session.destroy();
+  res.json({message: "Successfully logged out!"});
+});
 module.exports = router;

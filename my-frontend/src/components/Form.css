@@ -126,3 +126,195 @@
 .registerForm .haveAccount:hover {
     background-color: #0056b3; /* Changed color to darker blue */
 }
+
+/* Styling for the chat screen */
+
+.ChatContainer {
+    width: 550px;
+    height: 350px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: #ccc;
+}
+
+.ChatContainer .InnerChatContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box; /* Add this line */
+}
+
+.ChatContainer .InnerChatContainer .ChatScreen {
+    width: calc(100% - 30px); /* This will reduce the width by 10px to account for the 5px margin on each side */
+    height: 70%;  
+    background-color: #FFF;
+    margin: 15px;
+    box-sizing: border-box; 
+    border-radius: 5px;
+}
+
+.ChatContainer .InnerChatContainer .messagePart {
+    width: 100%;
+    height: 30%;
+}
+
+.ChatContainer .InnerChatContainer .messagePart .messagePartForm {
+    width: 90%;
+    height: 90%;
+}
+
+.messagePartForm {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.messagePartForm textarea {
+    width: 80%;
+    height: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    overflow: auto; 
+    resize: vertical; 
+    transition: border 0.3s ease-in-out;
+    text-align: start; 
+    vertical-align: top; 
+    margin-bottom: 5px;
+}
+
+.messagePartForm textarea:focus {
+    border: 1px solid #0088cc;
+    outline: none;
+}
+
+.messagePartForm button {
+    padding: 13px 10px;
+    background-color: rgb(117, 208, 250);
+    border: 0px;
+    border-radius: 10px;
+    color: #ffffff;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 10px; 
+    margin-right: -40px;
+}
+
+.messagePartForm button:hover {
+    background-color: rgb(117, 180, 250);
+    cursor: pointer;
+}
+
+/* Styling for the lobby screen */
+.lobbyContainer {
+    width: 550px;
+    height: 350px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: #fff; /* Lighter color for better contrast */
+    display: flex;
+    justify-content: flex-start;
+    align-items: start;
+    flex-direction: column;
+    padding: 20px; /* Added padding for more inner space */
+    position: relative;
+}
+
+.lobbyContainer h4 {
+    margin-bottom: 10px;
+    font-size: 1.4em; /* Larger text for title */
+    color: #333; /* Darker color for title */
+    margin-left: 33%;
+}
+
+.lobbyContainer ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 20px; /* Space between list and form */
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.lobbyContainer ul li {
+    margin-bottom: 10px; /* Space between list items */
+}
+
+.lobbyContainer ul button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    background-color: #abacac; /* Blue background for buttons */
+    color: #fffcfc; /* White text for buttons */
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.lobbyContainer ul button:hover {
+    background-color: #7ebcfd; /* Darker blue background for hover */
+}
+
+.lobbyContainer form {
+    display: flex;
+    flex-direction: column;
+    margin-left: 18%;
+}
+
+.lobbyContainer form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.lobbyContainer form input[type="text"] {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.lobbyContainer form input[type="submit"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #007BFF; /* Green background for submit button */
+    color: #fff; /* White text for submit button */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 30%;
+    height: auto;
+    margin-left: 37%;
+}
+
+.lobbyContainer form input[type="submit"]:hover {
+    background-color: #0088cc; /* Darker green background for hover */
+
+}
+
+.logoutButton {
+    position: relative;
+    left: 84%;
+    padding: 10px 20px;
+    background-color: #ff4c4c; /* red background */
+    border: none; 
+    border-radius: 5px;
+    color: #fff; /* white text */
+    font-weight: bold;
+    cursor: pointer; /* make it look clickable */
+    transition: background-color 0.3s ease; /* animate background color change */
+}
+
+.logoutButton:hover {
+    background-color: #e40000; /* darker red on hover */
+}
+
+.logoutButton:active {
+    background-color: #990000; /* even darker red when clicked */
+}
