@@ -17,26 +17,28 @@ router.post('/login', async (req, res) => {
       const user = await User.findOne({ username: username });
       if (!user) {
         console.log("User doesn't exist!");
-        return res.status(400).json({ message: "User doesn't exist!", sessionID: null }); // User not found
+        return res.json({ message: "User doesn't exist!", sessionID: null }); // User not found
       } else if (user.password !== password) {
         console.log("Wrong password.");
-        return res.status(400).json({ message: "Wrong password.", sessionID: null}); // Incorrect password
+        return res.json({ message: "Wrong password.", sessionID: null}); // Incorrect password
       } else {
         console.log("Successfully logged in");
         req.session.authenticated = true;
-        req.session.user = username;
-        return res.status(200).json({ message: "Successfully logged in", sessionID: req.session.id, user: req.session.user,}); // Login success
+        req.session.user = user.username;
+        return res.status(200).json({ message: "Successfully logged in", sessionID: req.session.id, user: req.session.user}); // Login success
       }
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "Server error" }); // Server error
     }
-  })
+  });
+
 router.get('/session',  (req,res) =>{
   if(req.session.user){
-    res.send({loggedIn: true, user: req.session.user});
+    res.send({loggedIn: true, user: req.session.user, name: req.session.name});
   } else res.send({loggedIn: false});
-})
+});
+
 router.post('/signup', async (req,res) =>{
     const user = new User ({
         username: req.body.username,
@@ -55,7 +57,7 @@ router.post('/signup', async (req,res) =>{
 });
 
 router.get('/logout', (req, res) => {
-  console.log(req.session.user);
+  console.log("User logged out!, ", req.session.user);
   res.json({loggedOut: true})
   req.session.destroy();
 });

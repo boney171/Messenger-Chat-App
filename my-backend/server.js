@@ -12,10 +12,10 @@ const cors = require('cors');
 //username: boney1711
 //password:j1zliceCDkRmYT6C
 
-dotenv.config();
+
 // Configure body-parser middleware to parse request bodies
 
-
+dotenv.config();
 app.use(cors({
     origin: ["http://localhost:3000"],
     methods: ["GET", "POST"],
@@ -37,9 +37,12 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+
+/*End of middleware configs */
+
+/* Database set up */
 let connect = "mongodb+srv://boney1711:j1zliceCDkRmYT6C@cluster0.g38qpg2.mongodb.net/?retryWrites=true&w=majority";
-const auth = require('./routes/auth')
-app.use('/api/auth/', auth);
+
 //console.log(process.env.MONGO_URL)
 mongoose.connect(connect);
 const database = mongoose.connection;
@@ -48,16 +51,32 @@ database.once("connected", () =>{
     console.log("Connected to the DB!")
 })
 
+/* End of database set up */
+
+const auth = require('./routes/auth');
+const rooms = require('./routes/rooms');
+
+
+
 app.get('/', (req,res) =>{
     if(req.session && req.session.authenticated){ //If user exists and is authenticated
         res.send("Welcome old friend " + req.session.username );
     } else res.send("Welcome new comer!");
 });
 
-app.get('/mainPage', (req,res) =>{
-    res.send("Welcome to the home page!")
-});
+app.use('/api/auth/', auth);
 
+
+// checking the session before accessing the rooms
+app.use((req, res, next) => {
+    if (req.session && req.session.authenticated) {
+      next();
+    } else {
+      res.status(401).send("Unauthorized");
+    }
+  });
+
+app.use("/api/rooms/", rooms);
 
 
 

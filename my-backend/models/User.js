@@ -13,7 +13,11 @@ const userSchema = new mongoose.Schema({
     email: {
         required: true,
         type: String,
-    }
+    },
+    rooms: {
+        type: Array,
+        required: true,
+    },
 });
 
 module.exports = mongoose.model('User', userSchema);
