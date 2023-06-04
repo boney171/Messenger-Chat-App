@@ -20,5 +20,16 @@ const messageSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
+/*
+messageSchema.pre("save", async function (next) {
+  try {
+    // Populate the sender and room fields with the actual documents
+    await this.populate("sender").execPopulate();
+    await this.populate("room").execPopulate();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+*/
 module.exports = mongoose.model("Messages", messageSchema);

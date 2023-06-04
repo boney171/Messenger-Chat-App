@@ -10,15 +10,16 @@ function App() {
   const [sessionID, setSessionID] = useState("");
   const [activeRoom, setActiveRoom] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const handleSessionChange = () => {
     setSessionID(localStorage.getItem('sessionID'));
   };
-
+  
+  //Check if user currently have a session or not, if yes go straight to the lobby screen
+  //If user does not have a session, make them sign in.
   useEffect( () => {
     axios.get("http://localhost:3001/api/auth/session", { withCredentials: true })
       .then(res => {
-          console.log(res);
+          //console.log(res);
         if (res.data.loggedIn === true) {
           setSessionID(res.data.user);
         } else {
@@ -41,8 +42,8 @@ function App() {
     <div className="App">
       { sessionID 
           ? activeRoom 
-            ? <ChatScreen room={activeRoom} onLeaveRoom={() => setActiveRoom(null)} /> 
-            : <Lobby onJoinRoom={setActiveRoom} setSessionID={setSessionID} /> 
+            ? <ChatScreen room={activeRoom} onLeaveRoom={() => setActiveRoom(null) } user={sessionID}/> 
+            : <Lobby onJoinRoom={setActiveRoom} setSessionID={setSessionID} user={sessionID}/> 
             : <LoginForm onSessionChange={handleSessionChange} setSessionID={setSessionID} />
       }
     </div>

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Room = require("../models/room");
+const User = require("../models/user");
 // TODO: add rest of the necassary imports
 
 
@@ -13,7 +14,7 @@ let rooms = []
 router.get('/all', async (req, res) => {
     try {
         const allRooms = await Room.find({});
-        console.log("All rooms in the database", allRooms);
+        //console.log("All rooms in the database", allRooms);
         res.status(200).json(allRooms);
     } catch (error) {
         console.log(error);
@@ -60,12 +61,44 @@ router.post('/create', async (req, res) => {
 
 
 
-router.post('/join', (req, res) => {
-    // TODO: write necassary codes to join a new room
+router.post('/join', async (req, res) => {
+    console.log("User trying to join a room in server");
+    
+    const user = req.session.user;
+    const room = req.body.room;
+    const databaseUser = await User.findOne({username: user});
+    
+    if (databaseUser.rooms.includes(room)) {
+        res.send({user: databaseUser.username, rooms: databaseUser.rooms});
+        return;
+    }
+
+    databaseUser.rooms.push(room);
+    await databaseUser.save();
+    console.log(databaseUser.rooms);
+    res.send({user: databaseUser.username, rooms: databaseUser.rooms});
 });
 
-router.delete('/leave', (req, res) => {
-    // TODO: write necassary codes to delete a room
+router.delete('/leave', async (req, res) => {
+    try {
+        console.log("User trying to leave room!");
+        const user = req.session.user;
+        const room = req.body.room;
+        const databaseUser = await User.findOne({username: user});
+        
+        if (!databaseUser) {
+            res.status(404).send({message: "User not found"});
+            return;
+        }
+    
+        databaseUser.rooms = databaseUser.rooms.filter(r => r !== room);
+        await databaseUser.save();
+        console.log(databaseUser.rooms);
+        res.status(200).send({message: "User successfully left the chat room!", rooms: databaseUser.rooms});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+    }
 });
 
 module.exports = router;

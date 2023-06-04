@@ -1,17 +1,18 @@
 // Lobby.js
 import { useState, useEffect } from 'react';
-import './Form.css';
+import './css/Lobby.css';
 import axios from 'axios';
+
 function Lobby({ onJoinRoom , setSessionID}) {  // take in onJoinRoom as prop
 
     const [newRoom, setNewRoom] = useState("");
     const [rooms, setRooms] = useState([]);
-    const activeChatRooms = () =>{
+   
 
-    };
 
     const retrieveRooms = async () => {
       try {
+
         const res = await axios.get("http://localhost:3001/api/rooms/all", { withCredentials: true });
         const roomNames = res.data.map(room => room.name);
         setRooms(roomNames);
@@ -23,6 +24,7 @@ function Lobby({ onJoinRoom , setSessionID}) {  // take in onJoinRoom as prop
     // this function gets called when a room button is clicked
     const handleJoinRoom = (roomName) => {
       onJoinRoom(roomName);
+
     };
     
     useEffect(() => {

@@ -1,3 +1,4 @@
+import './css/RegistrationForm.css'
 import {useState} from 'react';
 
 function RegistrationForm({setLoginModal, setRegisterModal}) {
@@ -5,11 +6,14 @@ function RegistrationForm({setLoginModal, setRegisterModal}) {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
 
+
+    //This function is to turn of the register modal, and turn on the login modal
     const haveAccountHandler =  () => {
       setLoginModal(true);
       setRegisterModal(false);
     }
 
+    //This function handles registering new account
     const submitNewAccountHandler = async  (e) =>{
       e.preventDefault();
 
@@ -19,6 +23,8 @@ function RegistrationForm({setLoginModal, setRegisterModal}) {
         email: email
       };
       console.log(user);
+      
+      //Send an api call to the server to create a new user.
       try{
         const response =  await fetch('http://localhost:3001/api/auth/signup', {
           method: 'POST',

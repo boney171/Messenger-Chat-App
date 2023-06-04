@@ -1,24 +1,124 @@
-
+import { useRef } from 'react';
+import './css/ChatScreen.css';
+import axios from 'axios';
 import { useState, useEffect } from 'react';
-import './Form.css';
-function ChatScreen() {
+import socketIOClient from "socket.io-client";
+const SOCKET_SERVER_URL = "http://localhost:3001";
 
-  return (
-    <div className="ChatContainer">
-        <div className="InnerChatContainer">
-            <div className="ChatScreen">
-                <h4>Room #</h4>
-            </div>
-            
-            <div className="messagePart">
-                <form className="messagePartForm">
-                <textarea className="textMessage" name="textMessage" placeholder='Enter your message'></textarea>
-                    <button>Submit</button>
+
+function ChatScreen(props) {
+    const {room} = props;
+    const [newMessage, setNewMessage] = useState("");
+    const [currentUser, setCurrentUser] = useState("");
+    const [currentUserMSGs, setCurrentUserMSGs] = useState([]);
+    const [otherUserMSGs, setOtherUserMSGs] = useState([]);
+    const socketRef = useRef(); 
+
+    useEffect(() => {
+        const retrieveCurrentUser = async () => {
+          try {
+            const response = await axios.get('http://localhost:3001/api/auth/session', {withCredentials: true});
+            setCurrentUser(response.data.user);
+          } catch (error) {
+            if(error.response) {
+              alert (error.response.data.message);
+            } else {
+              console.log(error.message);
+            }
+          }
+        };
+      
+        retrieveCurrentUser();
+      
+      }, []);
+    useEffect(() => {
+        const sendJoinRoomRequest = async () => {
+          try {
+            const response = await axios.post('http://localhost:3001/api/rooms/join', {room:props.room}, {withCredentials: true});
+            console.log(response);
+          } catch (error) {
+            if(error.response) {
+              alert (error.response.data.message);
+            } else {
+              console.log(error.message);
+            }
+          }
+        };
+      
+        sendJoinRoomRequest();
+      
+      }, []);
+
+      useEffect(() => {
+        const socket = socketIOClient(SOCKET_SERVER_URL);
+        socketRef.current = socket; // Storing socket reference
+      
+        socket.emit('joinRoom', room);
+        
+        // Listen for messages from the server
+    
+        socket.on('message', (data) => {
+          //console.log("Socket sending data to the whole room", data.user, data.message);
+          if(currentUser === data.user){
+            setCurrentUserMSGs((prevDatas) => [...prevDatas, data]);
+          }else setOtherUserMSGs((prevDatas) => [...prevDatas, data]);
+          
+        });
+      
+        // Cleanup on unmount
+        return () => {
+          socket.disconnect();
+        };
+      }, [room, currentUser]);
+     
+
+      const leaveChatRoom = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.delete('http://localhost:3001/api/rooms/leave', {
+                data: {room:props.room}, 
+                withCredentials: true
+            });
+            console.log(response.data.message);
+        } catch (error) {
+            console.error(error);
+        }
+        props.onLeaveRoom();
+    };
+
+    const sendMessage = async () =>{
+        try{
+            socketRef.current.emit("message", newMessage, room, currentUser); // Use socketRef.current to access socket
+            setNewMessage("");
+        }catch(error){
+            console.log(error);
+        }
+    }
+      return (
+        <div className="ChatContainer">
+            <div className="InnerChatContainer">
+                <div className="ChatScreen">
+                    <h4>{room}</h4>
+                    <div className="messagesContainer">
+                    {currentUserMSGs.concat(otherUserMSGs).sort((a, b) => new Date(a.time) - new Date(b.time)).map((message, index) => 
+    <div key={index} className={message.user === currentUser ? 'currentUserMessage' : 'otherUserMessage'}>
+        <p className="message-user">{message.user}</p>
+        <p className="message-content">{message.message}</p>
+    </div>
+)}
+      </div>
+                </div>
+                
+                <div className="messagePart">
+                <form className="messagePartForm" onSubmit={e => {e.preventDefault(); sendMessage();}}>
+                    <textarea className="textMessage" name="textMessage" placeholder='Enter your message' value={newMessage} onChange={e => setNewMessage(e.target.value)}></textarea>
+                    <button type="submit">Submit</button>
                 </form>
+                    <button className="exitButton" onClick={leaveChatRoom}>Exit</button>
+                </div>
             </div>
         </div>
-    </div>
-  );
+      );
 }
 
 export default ChatScreen;

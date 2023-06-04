@@ -1,0 +1,71 @@
+/* Styling for registration form */
+
+.registerFormContainer {
+    width: 400px;
+    height: auto;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+    background-color: #f7f7f7;
+}
+
+.formContainer h4 {
+    text-align: center;
+    color: #333333;
+    padding-bottom: 20px;
+}
+
+.registerForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.registerForm .up {
+    width: 100%;
+    color: #333333;
+    margin: 10px 0;
+}
+
+.registerForm input[type="text"], .registerForm input[type="password"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.registerForm input[type="submit"] {
+    width: 100%;
+    background-color: #007BFF; /* Changed color to blue */
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.registerForm input[type="submit"]:hover {
+    background-color: #0056b3; /* Changed color to darker blue */
+}
+
+.registerForm .haveAccount {
+    width: 100%;
+    background-color: #007BFF; /* Changed color to blue */
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.registerForm .haveAccount:hover {
+    background-color: #0056b3; /* Changed color to darker blue */
+}
