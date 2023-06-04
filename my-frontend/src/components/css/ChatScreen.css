@@ -1,0 +1,130 @@
+
+
+
+
+/* Styling for the chat screen */
+
+.ChatContainer {
+    width: 550px;
+    height: 350px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: #ccc;
+}
+
+.ChatContainer .InnerChatContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box; /* Add this line */
+}
+
+.ChatContainer .InnerChatContainer .ChatScreen {
+    width: calc(100% - 30px); 
+    height: 70%;  
+    background-color: #FFF;
+    margin: 15px;
+    box-sizing: border-box; 
+    border-radius: 5px;
+    overflow-y: auto; /* This will add the vertical scroll bar */
+  }
+
+.ChatContainer .InnerChatContainer .messagePart {
+    width: 100%;
+    height: 30%;
+}
+
+.ChatContainer .InnerChatContainer .messagePart .messagePartForm {
+    width: 90%;
+    height: 90%;
+}
+
+.messagePartForm {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.messagePartForm textarea {
+    width: 80%;
+    height: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    overflow: auto; 
+    resize: vertical; 
+    transition: border 0.3s ease-in-out;
+    text-align: start; 
+    vertical-align: top; 
+    margin-bottom: 5px;
+}
+
+.messagePartForm textarea:focus {
+    border: 1px solid #0088cc;
+    outline: none;
+}
+
+.messagePartForm button {
+    padding: 13px 10px;
+    background-color: rgb(117, 208, 250);
+    border: 0px;
+    border-radius: 10px;
+    color: #ffffff;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 10px; 
+    margin-right: -40px;
+}
+
+.messagePartForm button:hover {
+    background-color: rgb(117, 180, 250);
+    cursor: pointer;
+}
+
+.message {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.messagesContainer {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .currentUserMessage, .otherUserMessage {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 20px; /* more rounded edges */
+    background-color: #757575; /* consistent color scheme */
+    color: white; /* lighter text color */
+    font-family: 'Roboto', sans-serif; /* Roboto font - you may replace it with your preferred font */
+}
+
+.currentUserMessage {
+    align-self: flex-start;
+}
+
+.otherUserMessage {
+    align-self: flex-end;
+}
+
+/* Add more styling for the user name and message content */
+.message-content {
+    font-size: 16px; /* adjust as needed */
+    font-weight: 400; /* normal font weight */
+}
+
+.message-user {
+    font-size: 14px; /* smaller font size than content */
+    font-weight: 700; /* bold font weight */
+    color: #bbbbbb; /* lighter color for user name */
+}
+  
