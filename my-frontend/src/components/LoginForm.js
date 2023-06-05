@@ -44,6 +44,7 @@ function LoginForm(props) {
           props.setSessionID(data.user);
           props.onSessionChange();
           setLoginModal(false);
+          window.location.reload(false);
         }
     
       } catch (error) {
