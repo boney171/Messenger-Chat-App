@@ -33,11 +33,17 @@ router.post('/login', async (req, res) => {
     }
   });
 
-router.get('/session',  (req,res) =>{
-  if(req.session.user){
-    res.send({loggedIn: true, user: req.session.user, name: req.session.name});
-  } else res.send({loggedIn: false});
+
+
+router.get('/session', async (req, res) => {
+  if (req.session.user) {
+    const temp = await User.findOne({ username: req.session.user }).exec();
+    res.send({ loggedIn: true, user: req.session.user, name: req.session.user, id: temp._id });
+  } else {
+    res.send({ loggedIn: false });
+  }
 });
+  
 
 router.post('/signup', async (req,res) =>{
     const user = new User ({

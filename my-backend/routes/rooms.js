@@ -3,6 +3,7 @@ const router = express.Router();
 const Room = require("../models/room");
 const User = require("../models/user");
 // TODO: add rest of the necassary imports
+const Messages = require("../models/messages");
 
 
 
@@ -60,6 +61,25 @@ router.post('/create', async (req, res) => {
 
 
 
+
+router.get('/messages', async (req, res) => {
+    console.log("Attempting to get all messages");
+    try {
+      const room = req.query.room;
+      //console.log("Room:", room);
+      const roomValue = await Room.findOne({ name: room }).exec();
+      const room_id = roomValue._id;
+      //console.log("Room id: ", room_id);
+      const existingMessages = await Messages.find({ room: room_id });
+      res.status(200).json(existingMessages);
+      //console.log(existingMessages);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "failed to get messages" });
+    }
+  });
+  
+  
 
 router.post('/join', async (req, res) => {
     console.log("User trying to join a room in server");
