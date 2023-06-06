@@ -12,7 +12,6 @@ function ChatScreen(props) {
   const [currentUser, setCurrentUser] = useState("");
   const [currentUserMSGs, setCurrentUserMSGs] = useState([]);
   const [otherUserMSGs, setOtherUserMSGs] = useState([]);
-  const [previousMessages, setMessages] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("")
   const socketRef = useRef();
 
@@ -76,22 +75,43 @@ function ChatScreen(props) {
     };
   }, [room, currentUser]);
 
-  useEffect(() => {
-    console.log(currentUserMSGs);
-  }, [currentUserMSGs]);
 
   const retrieveMessages = async () => {
     try {
-      console.log("ROOM: ", room)
+      console.log("ROOM: ", room);
       const res = await axios.get(`http://localhost:3001/api/rooms/messages?room=${encodeURIComponent(props.room)}`, { withCredentials: true });
       console.log("Response data:", res.data); // Check if the response data is received correctly
 
+      // Map over the response data and create an object for each message
+      const messages = await Promise.all(res.data.map(async (message) => {
+        console.log("Sender: ", message.sender);
+        console.log("id: ", currentUserId);
+        const user = message.sender === currentUserId ? currentUser : await retrieveUsername(message.sender);
+        return {
+          time: message.createdAt,
+          message: message.message.text,
+          user: user
+        };
+      }));
+
+      // Update the currentUserMSGs state
+      setCurrentUserMSGs(messages);
+      console.log("Current user messages:", currentUserMSGs); // Check if the messages are set correctly
     } catch (error) {
       console.log("Error fetching messages:", error);
     }
   };
 
 
+  const retrieveUsername = async (userId) => {
+    try {
+      const res = await axios.get(`http://localhost:3001/api/rooms/user?user=${userId}`, { withCredentials: true });
+      return res.data;
+    } catch (error) {
+      console.log("Error fetching username:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,15 +119,7 @@ function ChatScreen(props) {
     };
 
     fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    console.log("PLEASE", previousMessages);
-  }, [previousMessages]);
-
-
-
+  }, [currentUserId]);
 
   const leaveChatRoom = async (e) => {
     e.preventDefault();
