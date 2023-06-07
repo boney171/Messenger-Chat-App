@@ -63,7 +63,7 @@ router.post('/create', async (req, res) => {
 
 
 router.get('/messages', async (req, res) => {
-    console.log("Attempting to get all messages");
+    //console.log("Attempting to get all messages");
     try {
         const room = req.query.room;
         //console.log("Room:", room);

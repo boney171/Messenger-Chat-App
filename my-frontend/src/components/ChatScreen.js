@@ -54,7 +54,12 @@ function ChatScreen(props) {
   }, []);
 
   useEffect(() => {
-    const socket = socketIOClient(SOCKET_SERVER_URL);
+    const socket = socketIOClient(SOCKET_SERVER_URL, {
+          cors: {
+            origin: SOCKET_SERVER_URL,
+            credentials: true,
+          }, transports: ['websocket']
+    });
     socketRef.current = socket; // Storing socket reference
 
     socket.emit('joinRoom', room);
@@ -137,7 +142,7 @@ function ChatScreen(props) {
 
   const sendMessage = async () => {
     try {
-      socketRef.current.emit("message", newMessage, room, currentUser); // Use socketRef.current to access socket
+      socketRef.current.emit("message", newMessage, room); // Use socketRef.current to access socket
       setNewMessage("");
     } catch (error) {
       console.log(error);
