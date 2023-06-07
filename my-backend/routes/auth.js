@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const path = require('path');
 const User = require("../models/user");
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 router.get('/router', (req,res)=>{
     res.send("in router");
@@ -18,7 +19,7 @@ router.post('/login', async (req, res) => {
       if (!user) {
         console.log("User doesn't exist!");
         return res.json({ message: "User doesn't exist!", sessionID: null }); // User not found
-      } else if (user.password !== password) {
+      } else if ( !await bcrypt.compare(req.body.password, user.password)) {
         console.log("Wrong password.");
         return res.json({ message: "Wrong password.", sessionID: null}); // Incorrect password
       } else {
@@ -46,12 +47,15 @@ router.get('/session', async (req, res) => {
   
 
 router.post('/signup', async (req,res) =>{
+    const hashedPassword = await bcrypt.hash(req.body.password, 15);
+    //console.log(hashedPassword);
     const user = new User ({
         username: req.body.username,
-        password: req.body.password,
+        password: hashedPassword,
         email: req.body.email,
-});
+    });
     console.log(req.body);
+    
     try{
         const dataSaved = await user.save();
         res.status(200).json(dataSaved);
