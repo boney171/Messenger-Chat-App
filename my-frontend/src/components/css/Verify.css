@@ -31,3 +31,14 @@
     border-radius: 3px;
     font-size: 0.9em;
 }
+
+.VerifyForm input[type="submit"] {
+    background-color: #0056b3;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
