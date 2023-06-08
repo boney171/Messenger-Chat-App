@@ -1,0 +1,33 @@
+.Verify {
+    width: 400px;
+    height: auto;
+    margin: 0 auto; /* Center the Verify container on the page */
+    padding: 20px;
+    border-radius: 5px; /* Round the corners */
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+    background-color: #f7f7f7;
+}
+
+.qrPicture {
+    display: flex;
+    justify-content: center; /* Center the QR code */
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.qrPicture img {
+    max-width: 100%; /* Make sure the QR code image doesn't overflow */
+}
+
+.VerifyForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.VerifyForm input[type="number"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
