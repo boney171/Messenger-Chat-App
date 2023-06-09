@@ -4,52 +4,54 @@ import { useState } from "react";
 import imageSrc from "./images/wallpaper2.jpg";
 import axios from "axios";
 function LoginForm(props) {
-    const [loginModal, setLoginModal] = useState(true);
-    const [registerModal, setRegisterModal] = useState(false);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    
-    //This function is to toggle login modal and register modal on and off
-    const handleRegisterClick = () => {
-      setLoginModal(false);
-      setRegisterModal(true);
-    }
-    
-    //This function handle login
-    const handleLoginClick = async (e) => {
-      e.preventDefault();
-    
-      //Create temp user object
-      const user = {
-        username: username,
-        password: password,
-      };
-    
+  const [loginModal, setLoginModal] = useState(true);
+  const [registerModal, setRegisterModal] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-      //Send an api call to the server to verify if user exists
-      try {
-        const response = await axios.post('http://localhost:3001/api/auth/login', user, {withCredentials: true});
-    
-        const data = response.data;
-        
-        //If server send back sessionID === null, means user does not exists
-        if(data.sessionID === null){
-          alert(data.message);
-          
-          //If server send back a legit sessionID, means user exists
-        } else {
-          props.setSessionID(data.user);
-          console.log(data.user);
-          //to retrieve const sessionID = localStorage.getItem('sessionID');
-          props.setSessionID(data.user);
-          props.onSessionChange();
-          setLoginModal(false);
-        }
-    
-      } catch (error) {
-        console.log(error);
-      }
+  //This function is to toggle login modal and register modal on and off
+  const handleRegisterClick = () => {
+    setLoginModal(false);
+    setRegisterModal(true);
+  };
+
+  //This function handle login
+  const handleLoginClick = async (e) => {
+    e.preventDefault();
+
+    //Create temp user object
+    const user = {
+      username: username,
+      password: password,
     };
+
+    //Send an api call to the server to verify if user exists
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/auth/login",
+        user,
+        { withCredentials: true }
+      );
+
+      const data = response.data;
+
+      //If server send back sessionID === null, means user does not exists
+      if (data.sessionID === null) {
+        alert(data.message);
+
+        //If server send back a legit sessionID, means user exists
+      } else {
+        props.setSessionID(data.user);
+        console.log(data.user);
+        //to retrieve const sessionID = localStorage.getItem('sessionID');
+        props.setSessionID(data.user);
+        props.onSessionChange();
+        setLoginModal(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return loginModal ? (
     <div className="container">
@@ -78,14 +80,7 @@ function LoginForm(props) {
           <input type="submit" value="Login" />
           <p>
             Don't have an account?{" "}
-            <span
-              onClick={handleRegisterClick}
-              style={{
-                color: "blue",
-                textDecoration: "underline",
-                cursor: "pointer",
-              }}
-            >
+            <span onClick={handleRegisterClick} className="register-link">
               Click here
             </span>
           </p>

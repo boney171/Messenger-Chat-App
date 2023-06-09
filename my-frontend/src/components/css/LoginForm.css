@@ -49,10 +49,11 @@ body {
 }
 
 .loginForm input[type="text"], .loginForm input[type="password"] {
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 20px;
     border: none;
-   
+    width: 250px; /* Increase width for a longer input field */
+    font-size: 1em; /* Increase font size for bigger text */
     font-size: 0.9em;
     outline: none;
     border-bottom: 1px solid black;
@@ -95,5 +96,22 @@ body {
 .title{
     font-size: 40px;
     margin-bottom: 40px;
+    color: #333333;
+    font-weight: bold;
    
 }
+
+.register-link {
+    color: #0056b3;
+    
+    cursor: pointer;
+    transition: color 0.3s ease; /* Smooth color transition */
+  }
+  
+  .register-link:hover {
+    color: darkblue; /* Darker blue on hover */
+  }
+  
+  .register-link:active {
+    color: purple; /* Purple while being clicked */
+  }
