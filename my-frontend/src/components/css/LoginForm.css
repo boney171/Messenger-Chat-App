@@ -66,11 +66,12 @@ body {
     border-bottom: 2px solid #0056b3;
 }
 .loginForm input[type="submit"] {
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: none;
     background-color: #007BFF;
     color: #ffffff;
     cursor: pointer;
+    font-size: 1em;
     border-radius: 3px;
 }
 
