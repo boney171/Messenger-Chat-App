@@ -27,10 +27,10 @@ function Verify(props) {
         const res = await axios.post("http://localhost:3001/api/auth/verify",verifyObject, { withCredentials: true });
         if(res.data.loggedIn === true){
             console.log(res);
-            props.setSessionID(res.user);
+            props.setSessionID(res.data.user);
             props.onSessionChange();
             props.setVerifyModal(false);
-            //window.location.reload(false);
+            window.location.reload(false);
         }else alert(res.data.message);
         
     }catch(error) {
