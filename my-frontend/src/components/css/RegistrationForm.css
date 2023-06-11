@@ -1,5 +1,42 @@
 /* Styling for registration form */
-
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .imageContainer {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: flex-end; /* Align the image to the right */
+   
+  }
+  
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .formContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    
+  }
+  
 .registerFormContainer {
     width: 400px;
     height: auto;
@@ -13,36 +50,47 @@
 .formContainer h4 {
     text-align: center;
     color: #333333;
-    padding-bottom: 20px;
+   
+    font-size: 40px;
 }
 
 .registerForm {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
 }
 
-.registerForm .up {
+/* .registerForm .up {
     width: 100%;
     color: #333333;
     margin: 10px 0;
-}
+} */
 
 .registerForm input[type="text"], .registerForm input[type="password"] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: none;
+    width: 250px; /* Increase width for a longer input field */
+    font-size: 1em; /* Increase font size for bigger text */
+    font-size: 0.9em;
+    outline: none;
+    border-bottom: 1px solid black;
 }
+
+.registerForm input[type="text"]:hover {
+    border-bottom: 2px solid #0056b3;
+}
+
+.registerForm input[type="password"]:hover{
+    border-bottom: 2px solid #0056b3;
+}
+
 
 .registerForm input[type="submit"] {
     width: 100%;
     background-color: #007BFF; /* Changed color to blue */
     color: white;
-    padding: 14px 20px;
+    padding: 12px 20px;
     margin: 8px 0;
     border: none;
     border-radius: 4px;
@@ -69,3 +117,17 @@
 .registerForm .haveAccount:hover {
     background-color: #0056b3; /* Changed color to darker blue */
 }
+.register-link {
+    color: #0056b3;
+    
+    cursor: pointer;
+    transition: color 0.3s ease; /* Smooth color transition */
+  }
+  
+  .register-link:hover {
+    color: darkblue; /* Darker blue on hover */
+  }
+  
+  .register-link:active {
+    color: purple; /* Purple while being clicked */
+  }
