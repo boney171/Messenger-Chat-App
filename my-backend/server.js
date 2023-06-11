@@ -8,6 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const session = require("express-session");
 const dotenv = require('dotenv');
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const User = require("./models/user");
 const cors = require('cors');
@@ -89,16 +90,20 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 io.use(wrap(sessionMiddleware));
 
 // only allow authenticated users
-/*
+
 io.use((socket, next) => {
   const session = socket.request.session;
+  console.log("Socket session!: ", socket.request.session)
   if (session && session.authenticated) {
+    console.log(session);
+    console.log("Successfully verify session")
     next();
   } else {
+    console.log("Can not verify session!");
     next(new Error("unauthorized"));
   }
 });
-*/
+
 
 socketSetup(io);
 
