@@ -87,7 +87,7 @@ function LoginForm(props) {
       setLoginModal={setLoginModal}
       setRegisterModal={setRegisterModal}
     />
-  ) : null;
+  ) : verifyModal ? <Verify username={username} setSessionID={props.setSessionID} onSessionChange={props.onSessionChange} setVerifyModal={setVerifyModal}/> : null;
 }
 
 export default LoginForm;
