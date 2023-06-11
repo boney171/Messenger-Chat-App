@@ -4,6 +4,7 @@ import LoginForm from './components/LoginForm';
 import RegistrationForm from './components/RegistrationForm';
 import ChatScreen from './components/ChatScreen';
 import Lobby from './components/Lobby';
+import Verify from "./components/Verify";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 function App() {
