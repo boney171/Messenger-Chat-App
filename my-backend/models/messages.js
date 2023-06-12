@@ -15,6 +15,10 @@ const messageSchema = mongoose.Schema(
       ref: "Room",
       required: true,
     },
+    reactions: {  
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      ref: "Reaction",
+    },
   },
   {
     timestamps: true,

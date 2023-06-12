@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faClock, faThumbsDown, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 const SOCKET_SERVER_URL = "http://localhost:3001";
 
 function ChatScreen(props) {
@@ -19,7 +19,26 @@ function ChatScreen(props) {
   const [showToday, setShowToday] = useState(false); // Add state to track whether to show "Today" message
   const [showMiddleTimestamp, setShowMiddleTimestamp] = useState(true); // State to control the display of the middle timestamp
   const [hasFetchedMessages, setHasFetchedMessages] = useState(false); // State to track whether the messages have been fetched
+  const [selectedMessage, setSelectedMessage] = useState([]); // State to track the selected message
+  const [selectedReaction, setSelectedReaction] = useState([]); // keeps track of the picked reactions
+  const [reactions, setReactions] = useState([]); // sets the reactions
   const socketRef = useRef();
+
+  const addReaction = async (messageId, reactionType, index) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/messages/react",
+        { messageId, reactionType },
+        { withCredentials: true }
+      );
+      // Handle the response as needed
+      console.log(response.data);
+      setReactions((prevReactions) => 
+      [...prevReactions, { messageId, reaction: reactionType }]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     setShowMiddleTimestamp(true);
@@ -274,12 +293,65 @@ function ChatScreen(props) {
                               : "otherUserMessageWrapper"
                           }
                         >
+                          <div className="message-reactions">         
+                  {selectedMessage.includes(index) && (
+                  <>
+                  {selectedReaction[index] !== "dislike" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addReaction(message.id, "like", index);
+                        setSelectedReaction((prevReactions) => {
+                          const newReactions = [...prevReactions];
+                          newReactions[index] = "like";
+                          return newReactions;
+                        });
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faThumbsUp} />
+                    </button>
+                  )}
+                  {selectedReaction[index] !== "like" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addReaction(message.id, "dislike", index);
+                        setSelectedReaction((prevReactions) => {
+                          const newReactions = [...prevReactions];
+                          newReactions[index] = "dislike";
+                          return newReactions;
+                        });
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faThumbsDown} />
+                    </button>
+                  )}
+                </>
+                )}
+                  </div>
                           <div
                             className={
                               message.user === currentUser
                                 ? "currentUserMessage"
                                 : "otherUserMessage"
                             }
+                            onClick={() => {
+                              if (selectedMessage.includes(index)) {
+                                setSelectedMessage((prevSelectedMessages) =>
+                                  prevSelectedMessages.filter((i) => i !== index)
+                                );
+                                setSelectedReaction((prevReactions) => {
+                                  const newReactions = [...prevReactions];
+                                  newReactions[index] = null;
+                                  return newReactions;
+                                });
+                              } else {
+                                setSelectedMessage((prevSelectedMessages) => [
+                                  ...prevSelectedMessages,
+                                  index,
+                                ]);
+                              }
+                            }}
                           >
                             <p className="message-content">{message.message}</p>
                           </div>
