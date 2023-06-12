@@ -7,7 +7,7 @@
   }
   
   .InnerChatContainer {
-    width: 1500px;
+    width: 120vh;
     height: 100vh; /* Adjusted from 1150px to 100vh */
     
     border-radius: 25px;
