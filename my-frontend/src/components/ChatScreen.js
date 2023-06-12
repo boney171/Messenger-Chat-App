@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faClock, faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 const SOCKET_SERVER_URL = "http://localhost:3001";
 
 function ChatScreen(props) {
@@ -14,7 +14,26 @@ function ChatScreen(props) {
   const [currentUserMSGs, setCurrentUserMSGs] = useState([]);
   const [otherUserMSGs, setOtherUserMSGs] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const [selectedMessage, setSelectedMessage] = useState([]);
+  const [selectedReaction, setSelectedReaction] = useState([]);
+  const [reactions, setReactions] = useState([]);
   const socketRef = useRef();
+
+  const addReaction = async (messageId, reactionType, index) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/messages/react",
+        { messageId, reactionType },
+        { withCredentials: true }
+      );
+      // Handle the response as needed
+      console.log(response.data);
+      setReactions((prevReactions) => 
+      [...prevReactions, { messageId, reaction: reactionType }]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const retrieveCurrentUser = async () => {
@@ -185,14 +204,74 @@ function ChatScreen(props) {
                       : "otherUserMessageWrapper"
                   }
                 >
+                  <div className="message-reactions">         
+                  {selectedMessage.includes(index) && (
+                  <>
+                  {selectedReaction[index] !== "dislike" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addReaction(message.id, "like", index);
+                        setSelectedReaction((prevReactions) => {
+                          const newReactions = [...prevReactions];
+                          newReactions[index] = "like";
+                          return newReactions;
+                        });
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faThumbsUp} />
+                    </button>
+                  )}
+                  {selectedReaction[index] !== "like" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addReaction(message.id, "dislike", index);
+                        setSelectedReaction((prevReactions) => {
+                          const newReactions = [...prevReactions];
+                          newReactions[index] = "dislike";
+                          return newReactions;
+                        });
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faThumbsDown} />
+                    </button>
+                  )}
+                </>
+                )}
+                  </div>
                   <div
                     className={
                       message.user === currentUser
                         ? "currentUserMessage"
                         : "otherUserMessage"
                     }
+                    onClick={() => {
+                      if (selectedMessage.includes(index)) {
+                        setSelectedMessage((prevSelectedMessages) =>
+                          prevSelectedMessages.filter((i) => i !== index)
+                        );
+                        setSelectedReaction7((prevReactions) => {
+                          const newReactions = [...prevReactions];
+                          newReactions[index] = null;
+                          return newReactions;
+                        });
+                      } else {
+                        setSelectedMessage((prevSelectedMessages) => [
+                          ...prevSelectedMessages,
+                          index,
+                        ]);
+                      }
+                    }}
                   >
                     <p className="message-content">{message.message}</p>
+                    {reactions.find(r => r.messageId === message.id) && (
+                      <FontAwesomeIcon icon={
+                        reactions.find(r => r.messageId === message.id).reaction === 'like' 
+                          ? faThumbsUp 
+                          : faThumbsDown
+                      } />
+                   )}
                   </div>
                   <p className="timestamp">
                     {new Date(message.time).toLocaleTimeString()}
@@ -232,3 +311,6 @@ function ChatScreen(props) {
 }
 
 export default ChatScreen;
+
+
+

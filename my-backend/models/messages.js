@@ -15,12 +15,11 @@ const messageSchema = mongoose.Schema(
       ref: "Room",
       required: true,
     },
-    reactions: [
-      {
+    reactions: {  
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        emoji: { type: String },
+        ref: "Reaction",
       },
-    ],
+    
   },
   {
     timestamps: true,
