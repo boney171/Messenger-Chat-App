@@ -133,3 +133,33 @@
     color: grey;
   
   }
+
+  .dateSeparator {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #e5e5ea;
+    line-height: 0.1em;
+    margin: 10px 0;
+    color: #b3b3b3;
+  }
+  
+  .dateSeparator:before {
+    content: '';
+    background: #fff;
+    position: relative;
+    top: -0.7em;
+    height: 1.5em;
+    width: 5em;
+    right: -5em;
+  }
+  
+  .dateSeparator:after {
+    content: '';
+    background: #fff;
+    position: relative;
+    top: -0.7em;
+    height: 1.5em;
+    width: 5em;
+    left: -5em;
+  }
+  
