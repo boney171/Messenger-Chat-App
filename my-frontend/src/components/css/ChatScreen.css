@@ -162,4 +162,53 @@
     width: 5em;
     left: -5em;
   }
+
+  .searchWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh; /* this will make it full height */
+  }
   
+  .searchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .inputContainer {
+    display: flex;
+    align-items: center;
+  }
+  
+  .searchBar {
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* Adjust as needed */
+    width:100%;
+  }
+      
+  .searchButton {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    border-radius: 50%; /* Make button circular */
+    width: 28px; /* Fixed width */
+    height: 28px; /* Fixed height */
+    display: flex; /* Use flex to center the icon */
+    align-items: center; /* Center icon vertically */
+    justify-content: center; /* Center icon horizontally */
+    cursor: pointer;
+    margin-left: 3px; /* Adjust as needed */
+    transition: background-color 0.3s ease; /* Smooth color transition */
+  }
+    
+  .searchButton:hover {
+    background-color: #005fdd; /* Darker shade when hovered */
+  }
+    
+  .searchButton:active {
+    background-color: #004cbf; /* Even darker shade when clicked */
+
+  }

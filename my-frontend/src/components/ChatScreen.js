@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 const SOCKET_SERVER_URL = "http://localhost:3001";
 
 function ChatScreen(props) {
@@ -20,7 +21,31 @@ function ChatScreen(props) {
   const [showMiddleTimestamp, setShowMiddleTimestamp] = useState(true); // State to control the display of the middle timestamp
   const [hasFetchedMessages, setHasFetchedMessages] = useState(false); // State to track whether the messages have been fetched
   const socketRef = useRef();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  useEffect(() => {
+    if(searchTerm === ""){
+        setSearchResults([]);
+    }
+}, [searchTerm]);
 
+  const handleSearch = (event) => {
+    event.preventDefault();
+    console.log("Submitted search term: ", searchTerm);
+  
+    // Combine all messages
+    const allMessages = currentUserMSGs.concat(otherUserMSGs);
+    
+    // Filter messages based on search term
+    const filteredMessages = allMessages.filter(message => 
+      message.message.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    setSearchResults(filteredMessages);
+  };
+  
   useEffect(() => {
     setShowMiddleTimestamp(true);
     setHasFetchedMessages(false);
@@ -209,20 +234,36 @@ function ChatScreen(props) {
       date1.getFullYear() !== date2.getFullYear()
     );
   };
+
+  // Combine all messages
+const allMessages = currentUserMSGs.concat(otherUserMSGs);
+
+// Display search results if search term is entered, else display all messages
+const displayedMessages = searchTerm ? searchResults : allMessages;
   return (
     <div className="ChatContainer">
       <div className="InnerChatContainer">
         <div className="ChatScreen">
           <h4>{room}</h4>
+            <div className="searchWrapper">
+              <div className="searchContainer">
+                <form className="inputContainer" onSubmit={handleSearch}>
+                  <input type="text" className="searchBar" placeholder="Search..." value={searchTerm} onChange={handleChange} />
+                  <button className="searchButton" type="submit">
+                    <FontAwesomeIcon icon={faSearch} />
+                  </button>
+                </form>
+              </div>
+          </div>
           <div className="messagesContainer">
             {isLoading && <div className="daySeparator">Loading...</div>}
             {!isLoading && (
+              
               <>
                 {currentUserMSGs.length === 0 && otherUserMSGs.length === 0 && (
                   <div className="daySeparator">Today</div>
                 )}
-                {currentUserMSGs
-                  .concat(otherUserMSGs)
+                {displayedMessages
                   .sort((a, b) => new Date(a.time) - new Date(b.time))
                   .map((message, index, arr) => {
                     const messageDate = new Date(message.time);
