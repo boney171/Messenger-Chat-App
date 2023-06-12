@@ -1,111 +1,92 @@
 
 /* Styling for the lobby screen */
 .lobbyContainer {
-    width: 550px;
-    height: 350px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    background-color: #fff; /* Lighter color for better contrast */
     display: flex;
-    justify-content: flex-start;
-    align-items: start;
     flex-direction: column;
-    padding: 20px; /* Added padding for more inner space */
-    position: relative;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 80%;
+    margin: 2rem auto;
+    padding: 1rem;
+ 
+    background: #fff;
 }
 
 .lobbyContainer h4 {
-    margin-bottom: 10px;
-    font-size: 1.4em; /* Larger text for title */
-    color: #333; /* Darker color for title */
-    margin-left: 33%;
+    font-size: 1.5rem;
+    color: #333;
 }
 
 .lobbyContainer ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin-bottom: 20px; /* Space between list and form */
-    width: 100%;
-    height: auto;
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-}
-
-.lobbyContainer ul li {
-    margin-bottom: 10px; /* Space between list items */
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
 }
 
 .lobbyContainer ul button {
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
     border: none;
-    background-color: #abacac; /* Blue background for buttons */
-    color: #fffcfc; /* White text for buttons */
-    font-weight: 700;
+    background: #007BFF;
+    color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-left: 5px;
-    margin-right: 5px;
+    transition: background 0.3s ease;
 }
 
 .lobbyContainer ul button:hover {
-    background-color: #7ebcfd; /* Darker blue background for hover */
+    background: #0056b3;
 }
 
 .lobbyContainer form {
     display: flex;
     flex-direction: column;
-    margin-left: 18%;
+    gap: 0.5rem;
 }
 
 .lobbyContainer form label {
-    margin-bottom: 5px;
-    font-weight: bold;
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
 .lobbyContainer form input[type="text"] {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
     border: 1px solid #ccc;
 }
 
 .lobbyContainer form input[type="submit"] {
-    padding: 10px;
-    border-radius: 5px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
     border: none;
-    background-color: #007BFF; /* Green background for submit button */
-    color: #fff; /* White text for submit button */
+    background: #28a745;
+    color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 30%;
-    height: auto;
-    margin-left: 37%;
+    transition: background 0.3s ease;
 }
 
 .lobbyContainer form input[type="submit"]:hover {
-    background-color: #0088cc; /* Darker green background for hover */
-
+    background: #218838;
 }
 
 .logoutButton {
-    position: relative;
-    left: 84%;
-    padding: 10px 20px;
-    background-color: #ff4c4c; /* red background */
-    border: none; 
-    border-radius: 5px;
-    color: #fff; /* white text */
-    font-weight: bold;
-    cursor: pointer; /* make it look clickable */
-    transition: background-color 0.3s ease; /* animate background color change */
+    align-self: flex-end;
+    padding: 0.5rem 1rem;
+    background: #dc3545;
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
 }
 
 .logoutButton:hover {
-    background-color: #e40000; /* darker red on hover */
+    background: #c82333;
 }
 
 .logoutButton:active {
-    background-color: #990000; /* even darker red when clicked */
+    background: #bd2130;
 }
