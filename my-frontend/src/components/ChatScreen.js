@@ -14,8 +14,27 @@ function ChatScreen(props) {
   const [currentUserMSGs, setCurrentUserMSGs] = useState([]);
   const [otherUserMSGs, setOtherUserMSGs] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentDay, setCurrentDay] = useState(new Date()); // Initialize currentDay as a Date object
+  const [showToday, setShowToday] = useState(false); // Add state to track whether to show "Today" message
+  const [showMiddleTimestamp, setShowMiddleTimestamp] = useState(true); // State to control the display of the middle timestamp
+  const [hasFetchedMessages, setHasFetchedMessages] = useState(false); // State to track whether the messages have been fetched
   const socketRef = useRef();
 
+  useEffect(() => {
+    setShowMiddleTimestamp(true);
+    setHasFetchedMessages(false);
+  }, [room]);
+
+  useEffect(() => {
+    if (!hasFetchedMessages) {
+      const fetchData = async () => {
+        await retrieveMessages();
+        setHasFetchedMessages(true);
+      };
+      fetchData();
+    }
+  }, [hasFetchedMessages]);
   useEffect(() => {
     const retrieveCurrentUser = async () => {
       try {
@@ -61,10 +80,11 @@ function ChatScreen(props) {
 
   useEffect(() => {
     const socket = socketIOClient(SOCKET_SERVER_URL, {
-          cors: {
-            origin: SOCKET_SERVER_URL,
-            credentials: true,
-          }, transports: ['websocket']
+      cors: {
+        origin: SOCKET_SERVER_URL,
+        credentials: true,
+      },
+      transports: ["websocket"],
     });
     socketRef.current = socket; // Storing socket reference
 
@@ -116,6 +136,7 @@ function ChatScreen(props) {
       // Update the currentUserMSGs state
       setCurrentUserMSGs(messages);
       console.log("Current user messages:", currentUserMSGs); // Check if the messages are set correctly
+      setIsLoading(false);
     } catch (error) {
       console.log("Error fetching messages:", error);
     }
@@ -167,39 +188,111 @@ function ChatScreen(props) {
       console.log(error);
     }
   };
+
+  const formatTimeOrDate = (messageDate) => {
+    const today = new Date();
+    const isSameDay =
+      messageDate.getDate() === today.getDate() &&
+      messageDate.getMonth() === today.getMonth() &&
+      messageDate.getFullYear() === today.getFullYear();
+
+    return isSameDay
+      ? messageDate.toLocaleTimeString()
+      : messageDate.toLocaleDateString();
+  };
+
+  // Helper function to check if two dates belong to different days
+  const isDifferentDay = (date1, date2) => {
+    return (
+      date1.getDate() !== date2.getDate() ||
+      date1.getMonth() !== date2.getMonth() ||
+      date1.getFullYear() !== date2.getFullYear()
+    );
+  };
   return (
     <div className="ChatContainer">
       <div className="InnerChatContainer">
         <div className="ChatScreen">
           <h4>{room}</h4>
           <div className="messagesContainer">
-            {currentUserMSGs
-              .concat(otherUserMSGs)
-              .sort((a, b) => new Date(a.time) - new Date(b.time))
-              .map((message, index) => (
-                <div
-                  key={index}
-                  className={
-                    message.user === currentUser
-                      ? "currentUserMessageWrapper"
-                      : "otherUserMessageWrapper"
-                  }
-                >
-                  <div
-                    className={
-                      message.user === currentUser
-                        ? "currentUserMessage"
-                        : "otherUserMessage"
+            {isLoading && <div className="daySeparator">Loading...</div>}
+            {!isLoading && (
+              <>
+                {currentUserMSGs.length === 0 && otherUserMSGs.length === 0 && (
+                  <div className="daySeparator">Today</div>
+                )}
+                {currentUserMSGs
+                  .concat(otherUserMSGs)
+                  .sort((a, b) => new Date(a.time) - new Date(b.time))
+                  .map((message, index, arr) => {
+                    const messageDate = new Date(message.time);
+                    const currentDate = new Date();
+                    const isEndOfDay =
+                      index === arr.length - 1 ||
+                      messageDate.getDate() !==
+                        new Date(arr[index + 1].time).getDate() ||
+                      messageDate.getMonth() !==
+                        new Date(arr[index + 1].time).getMonth() ||
+                      messageDate.getFullYear() !==
+                        new Date(arr[index + 1].time).getFullYear();
+                    const isToday =
+                      messageDate.getDate() === currentDate.getDate() &&
+                      messageDate.getMonth() === currentDate.getMonth() &&
+                      messageDate.getFullYear() === currentDate.getFullYear();
+
+                    // Update showToday state if messageDate is a new day
+                    if (
+                      !isEndOfDay &&
+                      messageDate.getDate() !== currentDay.getDate() &&
+                      messageDate.getMonth() !== currentDay.getMonth() &&
+                      messageDate.getFullYear() !== currentDay.getFullYear()
+                    ) {
+                      setCurrentDay(messageDate);
+                      setShowToday(true);
                     }
-                  >
-                    <p className="message-content">{message.message}</p>
-                  </div>
-                  <p className="timestamp">
-                    {new Date(message.time).toLocaleTimeString()}
-                  </p>{" "}
-                  {/* Timestamp is now outside the message bubble */}
-                </div>
-              ))}
+
+                    const showTimestamp = (showToday && isToday) || isEndOfDay;
+
+                    // Reset showToday state after rendering the first "Today" message
+                    if (showToday) {
+                      setShowToday(false);
+                    }
+
+                    return (
+                      <>
+                        {showTimestamp && (
+                          <div className="daySeparator">
+                            {isToday ? "Today" : formatTimeOrDate(messageDate)}
+                          </div>
+                        )}
+
+                        <div
+                          key={index}
+                          className={
+                            message.user === currentUser
+                              ? "currentUserMessageWrapper"
+                              : "otherUserMessageWrapper"
+                          }
+                        >
+                          <div
+                            className={
+                              message.user === currentUser
+                                ? "currentUserMessage"
+                                : "otherUserMessage"
+                            }
+                          >
+                            <p className="message-content">{message.message}</p>
+                          </div>
+                          <p className="timestamp">
+                            {formatTimeOrDate(new Date(message.time))}
+                          </p>{" "}
+                          {/* Timestamp is now outside the message bubble */}
+                        </div>
+                      </>
+                    );
+                  })}
+              </>
+            )}
           </div>
         </div>
 

@@ -5,6 +5,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^1.4.0",
+    "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
@@ -12,6 +13,8 @@
     "express-session": "^1.17.3",
     "loader": "^2.1.1",
     "mongoose": "^7.2.1",
-    "socket.io": "^4.6.2"
+    "qrcode": "^1.5.3",
+    "socket.io": "^4.6.2",
+    "speakeasy": "^2.0.0"
   }
 }
