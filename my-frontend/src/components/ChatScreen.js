@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faClock, faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 const SOCKET_SERVER_URL = "http://localhost:3001";
 
@@ -23,6 +23,29 @@ function ChatScreen(props) {
   const socketRef = useRef();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedMessage, setSelectedMessage] = useState([]); // State to track the selected message
+  const [selectedReaction, setSelectedReaction] = useState([]); // keeps track of the picked reactions
+  const [reactions, setReactions] = useState([]); // sets the reactions
+
+  const addReaction = async (messageId, reactionType, index) => {
+    console.log("inside addReact")
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/api/rooms/edit?reaction=${reactionType}`,
+        { messageId },
+        { withCredentials: true }
+      );
+      // Handle the response as needed
+      console.log(response.data);
+      setReactions((prevReactions) => [
+        ...prevReactions,
+        { messageId, reaction: reactionType },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -61,6 +84,7 @@ function ChatScreen(props) {
       fetchData();
     }
   }, [hasFetchedMessages]);
+
   useEffect(() => {
     const retrieveCurrentUser = async () => {
       try {
@@ -119,10 +143,14 @@ function ChatScreen(props) {
     // Listen for messages from the server
 
     socket.on("message", (data) => {
+      const newMessage = {
+        ...data,
+        id: data.messageId,  // this assumes the messageId is included in the socket data
+      };
       //console.log("Socket sending data to the whole room", data.user, data.message);
       if (currentUser === data.user) {
-        setCurrentUserMSGs((prevDatas) => [...prevDatas, data]);
-      } else setOtherUserMSGs((prevDatas) => [...prevDatas, data]);
+        setCurrentUserMSGs((prevDatas) => [...prevDatas, newMessage]);
+      } else setOtherUserMSGs((prevDatas) => [...prevDatas, newMessage]);
     });
 
     // Cleanup on unmount
@@ -155,6 +183,8 @@ function ChatScreen(props) {
             time: message.createdAt,
             message: message.message.text,
             user: user,
+            id: message._id,
+            reactions: message.reactions || {},
           };
         })
       );
@@ -208,7 +238,7 @@ function ChatScreen(props) {
 
   const sendMessage = async () => {
     try {
-      socketRef.current.emit("message", newMessage, room); // Use socketRef.current to access socket
+      socketRef.current.emit("message", newMessage, room, "0"); // Use socketRef.current to access socket
       setNewMessage("");
     } catch (error) {
       console.log(error);
@@ -236,6 +266,16 @@ function ChatScreen(props) {
     );
   };
 
+  const renderReaction = (reaction) => {
+    switch (reaction) {
+      case 'like':
+        return 'Liked';
+      case 'dislike':
+        return 'Disliked';
+      default:
+        return null;
+    }
+  };
   // Combine all messages
   const allMessages = currentUserMSGs.concat(otherUserMSGs);
 
@@ -305,12 +345,79 @@ function ChatScreen(props) {
                               : "otherUserMessageWrapper"
                           }
                         >
+                          <div className="message-reactions">
+                            {selectedMessage.includes(index) && (
+                              <>
+                                {selectedReaction[index] !== "dislike" && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      addReaction(message.id, "like", index);
+                                      setSelectedReaction((prevReactions) => {
+                                        const newReactions = [...prevReactions];
+                                        newReactions[index] = "like";
+                                        return newReactions;
+                                      });
+                                      console.log(
+                                        "Thumbs up selected for message index: ",
+                                        index
+                                      );
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faThumbsUp} />
+                                  </button>
+                                )}
+                                {selectedReaction[index] !== "like" && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      addReaction(message.id, "dislike", index);
+                                      setSelectedReaction((prevReactions) => {
+                                        const newReactions = [...prevReactions];
+                                        newReactions[index] = "dislike";
+                                        return newReactions;
+                                      });
+                                      console.log(
+                                        "Thumbs down selected for message index: ",
+                                        index
+                                      );
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faThumbsDown} />
+                                  </button>
+                                )}
+                              </>
+                            )}
+                          </div>
                           <div
                             className={
                               message.user === currentUser
                                 ? "currentUserMessage"
                                 : "otherUserMessage"
                             }
+                            onClick={() => {
+                              if (selectedMessage.includes(index)) {
+                                setSelectedMessage((prevSelectedMessages) =>
+                                  prevSelectedMessages.filter(
+                                    (i) => i !== index
+                                  )
+                                );
+                                setSelectedReaction((prevReactions) => {
+                                  const newReactions = [...prevReactions];
+                                  newReactions[index] = null;
+                                  return newReactions;
+                                });
+                              } else {
+                                setSelectedMessage((prevSelectedMessages) => [
+                                  ...prevSelectedMessages,
+                                  index,
+                                ]);
+                              }
+                              console.log(
+                                " selected for message index: ",
+                                index
+                              );
+                            }}
                           >
                             <p className="message-content">{message.message}</p>
                           </div>
@@ -318,6 +425,11 @@ function ChatScreen(props) {
                             {formatTimeOrDate(new Date(message.time))}
                           </p>{" "}
                           {/* Timestamp is now outside the message bubble */}
+                          <p className="reactionText">
+                            {message.reactions && message.reactions.text
+                              ? renderReaction(message.reactions.text)
+                              : null}
+                          </p>
                         </div>
                       </>
                     );
