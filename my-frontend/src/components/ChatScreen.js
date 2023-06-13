@@ -4,8 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faClock } from "@fortawesome/free-solid-svg-icons";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faClock, faThumbsDown, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 const SOCKET_SERVER_URL = "http://localhost:3001";
 
 function ChatScreen(props) {
@@ -20,32 +19,31 @@ function ChatScreen(props) {
   const [showToday, setShowToday] = useState(false); // Add state to track whether to show "Today" message
   const [showMiddleTimestamp, setShowMiddleTimestamp] = useState(true); // State to control the display of the middle timestamp
   const [hasFetchedMessages, setHasFetchedMessages] = useState(false); // State to track whether the messages have been fetched
+  const [selectedMessage, setSelectedMessage] = useState([]); // State to track the selected message
+  const [selectedReaction, setSelectedReaction] = useState([]); // keeps track of the picked reactions
+  const [reactions, setReactions] = useState([]); // sets the reactions
   const socketRef = useRef();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const handleChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-  useEffect(() => {
-    if(searchTerm === ""){
-        setSearchResults([]);
-    }
-}, [searchTerm]);
 
-  const handleSearch = (event) => {
-    event.preventDefault();
-    console.log("Submitted search term: ", searchTerm);
-  
-    // Combine all messages
-    const allMessages = currentUserMSGs.concat(otherUserMSGs);
-    
-    // Filter messages based on search term
-    const filteredMessages = allMessages.filter(message => 
-      message.message.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    setSearchResults(filteredMessages);
+  const addReaction = async (messageId, reactionType, index) => {
+    console.log("inside addReact")
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/api/rooms/edit?reaction=${reactionType}`,
+        { messageId },
+        { withCredentials: true }
+      );
+      // Handle the response as needed
+      console.log(response.data);
+      setReactions((prevReactions) => [
+        ...prevReactions,
+        { messageId, reaction: reactionType },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
   };
   
+
   useEffect(() => {
     setShowMiddleTimestamp(true);
     setHasFetchedMessages(false);
@@ -115,15 +113,25 @@ function ChatScreen(props) {
 
     socket.emit("joinRoom", room);
 
+    socket.on("reaction", (data) => {
+      const { messageId, reactionType } = data;
+      setReactions((prevReactions) =>
+        [...prevReactions, { messageId, reaction: reactionType }]
+      );
+    });
+
     // Listen for messages from the server
 
     socket.on("message", (data) => {
+      const newMessage = {
+        ...data,
+        id: data.messageId,  // this assumes the messageId is included in the socket data
+      };
       //console.log("Socket sending data to the whole room", data.user, data.message);
       if (currentUser === data.user) {
-        setCurrentUserMSGs((prevDatas) => [...prevDatas, data]);
-      } else setOtherUserMSGs((prevDatas) => [...prevDatas, data]);
+        setCurrentUserMSGs((prevDatas) => [...prevDatas, newMessage]);
+      } else setOtherUserMSGs((prevDatas) => [...prevDatas, newMessage]);
     });
-
     // Cleanup on unmount
     return () => {
       socket.disconnect();
@@ -154,6 +162,7 @@ function ChatScreen(props) {
             time: message.createdAt,
             message: message.message.text,
             user: user,
+            id: message._id,
           };
         })
       );
@@ -207,7 +216,7 @@ function ChatScreen(props) {
 
   const sendMessage = async () => {
     try {
-      socketRef.current.emit("message", newMessage, room); // Use socketRef.current to access socket
+      socketRef.current.emit("message", newMessage, room, "0"); // Use socketRef.current to access socket
       setNewMessage("");
     } catch (error) {
       console.log(error);
@@ -234,36 +243,20 @@ function ChatScreen(props) {
       date1.getFullYear() !== date2.getFullYear()
     );
   };
-
-  // Combine all messages
-const allMessages = currentUserMSGs.concat(otherUserMSGs);
-
-// Display search results if search term is entered, else display all messages
-const displayedMessages = searchTerm ? searchResults : allMessages;
   return (
     <div className="ChatContainer">
       <div className="InnerChatContainer">
         <div className="ChatScreen">
           <h4>{room}</h4>
-            <div className="searchWrapper">
-              <div className="searchContainer">
-                <form className="inputContainer" onSubmit={handleSearch}>
-                  <input type="text" className="searchBar" placeholder="Search..." value={searchTerm} onChange={handleChange} />
-                  <button className="searchButton" type="submit">
-                    <FontAwesomeIcon icon={faSearch} />
-                  </button>
-                </form>
-              </div>
-          </div>
           <div className="messagesContainer">
             {isLoading && <div className="daySeparator">Loading...</div>}
             {!isLoading && (
-              
               <>
                 {currentUserMSGs.length === 0 && otherUserMSGs.length === 0 && (
                   <div className="daySeparator">Today</div>
                 )}
-                {displayedMessages
+                {currentUserMSGs
+                  .concat(otherUserMSGs)
                   .sort((a, b) => new Date(a.time) - new Date(b.time))
                   .map((message, index, arr) => {
                     const messageDate = new Date(message.time);
@@ -271,11 +264,11 @@ const displayedMessages = searchTerm ? searchResults : allMessages;
                     const isEndOfDay =
                       index === arr.length - 1 ||
                       messageDate.getDate() !==
-                        new Date(arr[index + 1].time).getDate() ||
+                      new Date(arr[index + 1].time).getDate() ||
                       messageDate.getMonth() !==
-                        new Date(arr[index + 1].time).getMonth() ||
+                      new Date(arr[index + 1].time).getMonth() ||
                       messageDate.getFullYear() !==
-                        new Date(arr[index + 1].time).getFullYear();
+                      new Date(arr[index + 1].time).getFullYear();
                     const isToday =
                       messageDate.getDate() === currentDate.getDate() &&
                       messageDate.getMonth() === currentDate.getMonth() &&
@@ -315,12 +308,68 @@ const displayedMessages = searchTerm ? searchResults : allMessages;
                               : "otherUserMessageWrapper"
                           }
                         >
+                          <div className="message-reactions">
+                            {selectedMessage.includes(index) && (
+                              <>
+                                {selectedReaction[index] !== "dislike" && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      addReaction(message.id, "like", index);
+                                      setSelectedReaction((prevReactions) => {
+                                        const newReactions = [...prevReactions];
+                                        newReactions[index] = "like";
+                                        return newReactions;
+                                      });
+                                      console.log("Thumbs up selected for message index: ", index);
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faThumbsUp} />
+                                  </button>
+                                )}
+                                {selectedReaction[index] !== "like" && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      addReaction(message.id, "dislike", index);
+                                      setSelectedReaction((prevReactions) => {
+                                        const newReactions = [...prevReactions];
+                                        newReactions[index] = "dislike";
+                                        return newReactions;
+                                      });
+                                      console.log("Thumbs down selected for message index: ", index);
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faThumbsDown} />
+                                  </button>
+                                )}
+                              </>
+                            )}
+                          </div>
                           <div
                             className={
                               message.user === currentUser
                                 ? "currentUserMessage"
                                 : "otherUserMessage"
                             }
+                            onClick={() => {
+                              if (selectedMessage.includes(index)) {
+                                setSelectedMessage((prevSelectedMessages) =>
+                                  prevSelectedMessages.filter((i) => i !== index)
+                                );
+                                setSelectedReaction((prevReactions) => {
+                                  const newReactions = [...prevReactions];
+                                  newReactions[index] = null;
+                                  return newReactions;
+                                });
+                              } else {
+                                setSelectedMessage((prevSelectedMessages) => [
+                                  ...prevSelectedMessages,
+                                  index,
+                                ]);
+                              }
+                              console.log(" selected for message index: ", index);
+                            }}
                           >
                             <p className="message-content">{message.message}</p>
                           </div>
