@@ -19,8 +19,8 @@ const socketSetup = (io) => {
         //This function receives msg from the user
         //Store message into the database
         //Send back that message to every one in the same room.
-        socket.on('message', async (message, room) => {
-          console.log("Message Received: " + message + " From room " + room + " From user: " + user);
+        socket.on('message', async (message, room, reaction) => {
+          console.log("Message Received: " + message + " From room " + room + " From user: " + user + " Reaction: " + reaction);
           try {
             // Find the user and room documents
             const [foundUser, foundRoom] = await Promise.all([
@@ -36,19 +36,20 @@ const socketSetup = (io) => {
             console.log(foundUser,foundRoom);
             const newMessage = new Messages({
               message: { text: message },
+              reactions: { text: reaction},
               sender: foundUser._id,
               room: foundRoom._id,
             });
         
             const dataSaved = await newMessage.save();
-            //console.log('Message saved:', dataSaved);
+            console.log('This is recnet Message saved:', dataSaved);
         
             // Access the createdAt field directly from the saved data.
             const time = dataSaved.createdAt;
             //console.log('Message sent at:', time);
             
             // Send back message from user to everyone in the room.
-            io.to(room).emit('message', { user, message , time });
+            io.to(room).emit('message', { user, message , time, reaction });
           } catch (err) {
             console.error('Error saving message:', err);
           }

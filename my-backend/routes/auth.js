@@ -16,28 +16,28 @@ router.get('/router', (req,res)=>{
 
 
 router.post('/login', async (req, res) => {
-    console.log("User sending a post request on the login page!");
-    console.log(req.body);
-    const {username , password} = req.body;
-    try {
-      const user = await User.findOne({ username: username });
-      if (!user) {
-        console.log("User doesn't exist!");
-        return res.json({ message: "User doesn't exist!", loggedIn: false }); // User not found
-      } else if ( !await bcrypt.compare(req.body.password, user.password)) { //New changes for encrypted passwords
-        console.log("Wrong password.");
-        return res.json({ message: "Wrong password.", loggedIn: false}); // Incorrect password
-      } else {
-        console.log("User enterred correct username and password");
-        //req.session.authenticated = true;
-        //req.session.user = user.username;
-        return res.status(200).json({ message: "correct", loggedIn: true}); // Login success
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "Server error" }); // Server error
+  console.log("User sending a post request on the login page!");
+  console.log(req.body);
+  const {username , password} = req.body;
+  try {
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      console.log("User doesn't exist!");
+      return res.json({ message: "User doesn't exist!", sessionID: null }); // User not found
+    } else if (user.password !== password) {
+      console.log("Wrong password.");
+      return res.json({ message: "Wrong password.", sessionID: null}); // Incorrect password
+    } else {
+      console.log("Successfully logged in");
+      req.session.authenticated = true;
+      req.session.user = user.username;
+      return res.status(200).json({ message: "Successfully logged in", sessionID: req.session.id, user: req.session.user}); // Login success
     }
-  });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" }); // Server error
+  }
+});
 
 
   router.get('/verify', (req, res) => {

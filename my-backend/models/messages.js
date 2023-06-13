@@ -5,6 +5,9 @@ const messageSchema = mongoose.Schema(
     message: {
       text: { type: String, required: true },
     },
+    reactions: {
+      text: { type: String, required: true },
+    },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -18,7 +21,7 @@ const messageSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 /*
 messageSchema.pre("save", async function (next) {

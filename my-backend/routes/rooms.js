@@ -79,6 +79,32 @@ router.get('/messages', async (req, res) => {
     }
 });
 
+router.post('/edit', async (req, res) => {
+    try {
+      const messageId = req.body.messageId;
+      const reaction = req.query.reaction;
+      console.log("Message ID:", messageId);
+      console.log("Reaction Type:", reaction);
+      //const updatedMessage = await Messages.updateOne(messageId, )
+
+      const temp = Messages.findOne({_id: messageId })
+
+      if(temp != null){
+        console.log("This is found: ", temp.message);
+      }
+
+      const result = await Messages.updateOne(
+        { _id: messageId }, // Filter condition for finding the message
+        { $reactions: { text: reaction } } // Update operation to set the new content
+      );
+
+      console.log("Result: ", result);
+
+    } catch (error) {
+      console.log("Trying to edit:", error);
+    }
+  });
+
 router.get('/user', async (req, res) => {
     try {
         const id = req.query.user;
