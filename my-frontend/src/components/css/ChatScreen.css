@@ -92,7 +92,8 @@
     color: white;
     border: none;
     border-radius: 20px;
-    padding: 10px 20px;
+    padding: 10px 10px;
+    height: 36px;
     cursor: pointer;
     margin-left: 10px;
   }

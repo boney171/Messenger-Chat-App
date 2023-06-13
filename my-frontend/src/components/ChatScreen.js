@@ -27,25 +27,26 @@ function ChatScreen(props) {
     setSearchTerm(event.target.value);
   };
   useEffect(() => {
-    if(searchTerm === ""){
-        setSearchResults([]);
+    if (searchTerm === "") {
+      setSearchResults([]);
     }
-}, [searchTerm]);
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     event.preventDefault();
     console.log("Submitted search term: ", searchTerm);
-  
+
     // Combine all messages
     const allMessages = currentUserMSGs.concat(otherUserMSGs);
-    
+
     // Filter messages based on search term
-    const filteredMessages = allMessages.filter(message => 
-      message.message.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+    const filteredMessages = allMessages.filter((message) =>
+      message.message.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     setSearchResults(filteredMessages);
   };
-  
+
   useEffect(() => {
     setShowMiddleTimestamp(true);
     setHasFetchedMessages(false);
@@ -236,29 +237,34 @@ function ChatScreen(props) {
   };
 
   // Combine all messages
-const allMessages = currentUserMSGs.concat(otherUserMSGs);
+  const allMessages = currentUserMSGs.concat(otherUserMSGs);
 
-// Display search results if search term is entered, else display all messages
-const displayedMessages = searchTerm ? searchResults : allMessages;
+  // Display search results if search term is entered, else display all messages
+  const displayedMessages = searchTerm ? searchResults : allMessages;
   return (
     <div className="ChatContainer">
       <div className="InnerChatContainer">
         <div className="ChatScreen">
           <h4>{room}</h4>
-            <div className="searchWrapper">
-              <div className="searchContainer">
-                <form className="inputContainer" onSubmit={handleSearch}>
-                  <input type="text" className="searchBar" placeholder="Search..." value={searchTerm} onChange={handleChange} />
-                  <button className="searchButton" type="submit">
-                    <FontAwesomeIcon icon={faSearch} />
-                  </button>
-                </form>
-              </div>
+          <div className="searchWrapper">
+            <div className="searchContainer">
+              <form className="inputContainer" onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  className="searchBar"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleChange}
+                />
+                <button className="searchButton" type="submit">
+                  <FontAwesomeIcon icon={faSearch} />
+                </button>
+              </form>
+            </div>
           </div>
           <div className="messagesContainer">
             {isLoading && <div className="daySeparator">Loading...</div>}
             {!isLoading && (
-              
               <>
                 {currentUserMSGs.length === 0 && otherUserMSGs.length === 0 && (
                   <div className="daySeparator">Today</div>
@@ -268,45 +274,29 @@ const displayedMessages = searchTerm ? searchResults : allMessages;
                   .map((message, index, arr) => {
                     const messageDate = new Date(message.time);
                     const currentDate = new Date();
-                    const isEndOfDay =
-                      index === arr.length - 1 ||
-                      messageDate.getDate() !==
-                        new Date(arr[index + 1].time).getDate() ||
-                      messageDate.getMonth() !==
-                        new Date(arr[index + 1].time).getMonth() ||
-                      messageDate.getFullYear() !==
-                        new Date(arr[index + 1].time).getFullYear();
+                    const prevMessageDate =
+                      index > 0 ? new Date(arr[index - 1].time) : null;
+                    const isNewDayFromPrevMsg =
+                      index === 0 ||
+                      (prevMessageDate &&
+                        (messageDate.getDate() !== prevMessageDate.getDate() ||
+                          messageDate.getMonth() !==
+                            prevMessageDate.getMonth() ||
+                          messageDate.getFullYear() !==
+                            prevMessageDate.getFullYear()));
+
                     const isToday =
                       messageDate.getDate() === currentDate.getDate() &&
                       messageDate.getMonth() === currentDate.getMonth() &&
                       messageDate.getFullYear() === currentDate.getFullYear();
 
-                    // Update showToday state if messageDate is a new day
-                    if (
-                      !isEndOfDay &&
-                      messageDate.getDate() !== currentDay.getDate() &&
-                      messageDate.getMonth() !== currentDay.getMonth() &&
-                      messageDate.getFullYear() !== currentDay.getFullYear()
-                    ) {
-                      setCurrentDay(messageDate);
-                      setShowToday(true);
-                    }
-
-                    const showTimestamp = (showToday && isToday) || isEndOfDay;
-
-                    // Reset showToday state after rendering the first "Today" message
-                    if (showToday) {
-                      setShowToday(false);
-                    }
-
                     return (
                       <>
-                        {showTimestamp && (
+                        {isNewDayFromPrevMsg && (
                           <div className="daySeparator">
                             {isToday ? "Today" : formatTimeOrDate(messageDate)}
                           </div>
                         )}
-
                         <div
                           key={index}
                           className={
