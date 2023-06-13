@@ -88,20 +88,18 @@ router.post('/edit', async (req, res) => {
       //const updatedMessage = await Messages.updateOne(messageId, )
 
       const temp = Messages.findOne({_id: messageId })
-
-      if(temp != null){
-        console.log("This is found: ", temp.message);
-      }
+        console.log("Temp:", temp);
 
       const result = await Messages.updateOne(
         { _id: messageId }, // Filter condition for finding the message
-        { $reactions: { text: reaction } } // Update operation to set the new content
+        { $set: { 'reactions.text': reaction} } // Update operation to set the new content
       );
 
       console.log("Result: ", result);
-
+        res.status(200).json({ message: "Successfully edited message" });
     } catch (error) {
       console.log("Trying to edit:", error);
+        res.status(500).json({ message: "Failed to edit message" });
     }
   });
 

@@ -163,6 +163,7 @@ function ChatScreen(props) {
             message: message.message.text,
             user: user,
             id: message._id,
+            reactions: message.reactions,
           };
         })
       );
@@ -243,6 +244,16 @@ function ChatScreen(props) {
       date1.getFullYear() !== date2.getFullYear()
     );
   };
+  const renderReaction = (reaction) => {
+    switch (reaction) {
+      case 'like':
+        return 'Like';
+      case 'dislike':
+        return 'Dislike';
+      default:
+        return null;
+    }
+  };
   return (
     <div className="ChatContainer">
       <div className="InnerChatContainer">
@@ -321,7 +332,10 @@ function ChatScreen(props) {
                                         newReactions[index] = "like";
                                         return newReactions;
                                       });
-                                      console.log("Thumbs up selected for message index: ", index);
+                                      console.log(
+                                        "Thumbs up selected for message index: ",
+                                        index
+                                      );
                                     }}
                                   >
                                     <FontAwesomeIcon icon={faThumbsUp} />
@@ -337,7 +351,10 @@ function ChatScreen(props) {
                                         newReactions[index] = "dislike";
                                         return newReactions;
                                       });
-                                      console.log("Thumbs down selected for message index: ", index);
+                                      console.log(
+                                        "Thumbs down selected for message index: ",
+                                        index
+                                      );
                                     }}
                                   >
                                     <FontAwesomeIcon icon={faThumbsDown} />
@@ -355,7 +372,9 @@ function ChatScreen(props) {
                             onClick={() => {
                               if (selectedMessage.includes(index)) {
                                 setSelectedMessage((prevSelectedMessages) =>
-                                  prevSelectedMessages.filter((i) => i !== index)
+                                  prevSelectedMessages.filter(
+                                    (i) => i !== index
+                                  )
                                 );
                                 setSelectedReaction((prevReactions) => {
                                   const newReactions = [...prevReactions];
@@ -368,7 +387,10 @@ function ChatScreen(props) {
                                   index,
                                 ]);
                               }
-                              console.log(" selected for message index: ", index);
+                              console.log(
+                                " selected for message index: ",
+                                index
+                              );
                             }}
                           >
                             <p className="message-content">{message.message}</p>
@@ -377,6 +399,9 @@ function ChatScreen(props) {
                             {formatTimeOrDate(new Date(message.time))}
                           </p>{" "}
                           {/* Timestamp is now outside the message bubble */}
+                          <p className="reactionText">
+                            {renderReaction(message.reactions.text)}
+                          </p>
                         </div>
                       </>
                     );

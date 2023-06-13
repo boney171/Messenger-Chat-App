@@ -134,6 +134,11 @@
   
   }
 
+  .reactionText{
+    font-size: 0.8em;
+    color: grey;
+  }
+
   .dateSeparator {
     width: 100%;
     text-align: center;
