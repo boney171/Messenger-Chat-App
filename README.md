@@ -56,6 +56,10 @@ Follow these steps to get the Messenger Chat App up and running on your local ma
 
 `cd my-backend`
 
+8. Start the backend application by running:
+
+`npm run startServer`
+
 Now, you should have the frontend and backend of the Messenger Chat App running in separate terminals.
 
 **Note:** Replace `<repo-url>` with the URL of this repository.
