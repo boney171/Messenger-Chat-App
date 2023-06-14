@@ -1,4 +1,4 @@
-<h1 style="font-size:2em;"> Messenger Chat App</h1>
+<h1 style="font-size:2em;">📫 Messenger Chat App</h1>
 
 Welcome to the repository for the Messenger Chat App, a real-time chat application brought to you by Team Paws & Claws.
 
@@ -10,7 +10,7 @@ The backend server of the Messenger Chat App is hosted using Heroku, a platform 
 
 [Live Demo](https://main--gilded-dango-efff41.netlify.app/)
 
-<h3 style="font-size:1.5em;"> Features</h3>
+## 🌟 Features
 
 **-Real-time communication:** Users can communicate with each other in real-time within chat rooms.
 
@@ -25,7 +25,7 @@ The backend server of the Messenger Chat App is hosted using Heroku, a platform 
 **-Message Search:** Users can easily search for specific messages.
 
 
-<h3 style="font-size:1.5em;"> Technologies </h3>
+## ⚙️ Technologies 
 This project has been created with:
 
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original.svg" alt="Node.js Logo" width="75" height="75"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original.svg" alt="MongoDB Logo" width="75" height="75"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original.svg" alt="Express.js Logo" width="75" height="75"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="React Logo" width="75" height="75"><img src="https://www.vectorlogo.zone/logos/heroku/heroku-icon.svg" alt="Heroku Logo" width="75" height="75"><img src="https://avatars.githubusercontent.com/u/7892489?s=200&v=4" alt="Netlify Logo" width="75" height="75">
@@ -60,5 +60,5 @@ Now, you should have the frontend and backend of the Messenger Chat App running 
 
 **Note:** Replace `<repo-url>` with the URL of this repository.
 
-<h3 style="font-size:1.5em;">Contributors </h3>
+## 👥 Contributors 
 Tri, Howie, Victor, Justin.
